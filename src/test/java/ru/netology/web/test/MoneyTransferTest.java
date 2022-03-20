@@ -78,6 +78,6 @@ public class MoneyTransferTest {
         var transferInfo = new DataHelper.SendMoney(String.valueOf(secondCardBalanceBefore + 1000),"5559 0000 0000 0002");
         cardPage.moneySend(transferInfo);
         int secondCardBalance = dashboardPage.getSecondCardBalance();
-        assert (secondCardBalance > 0);
+        assert (secondCardBalance >= 0);
     }
 }
