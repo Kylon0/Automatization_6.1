@@ -32,13 +32,13 @@ public class DashboardPage {
         return Integer.parseInt(value);
     }
 
-    public CardOnePage toCardOne() {
+    public CardPage toCardOne() {
         button.click();
-        return page(CardOnePage.class);
+        return page(CardPage.class);
     }
 
-    public CardTwoPage toCardTwo() {
+    public CardPage toCardTwo() {
         button2.click();
-        return page(CardTwoPage.class);
+        return page(CardPage.class);
     }
 }

@@ -1,9 +1,8 @@
 package ru.netology.web.test;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import ru.netology.web.data.DataHelper;
-import ru.netology.web.page.CardOnePage;
-import ru.netology.web.page.DashboardPage;
 import ru.netology.web.page.LoginPage;
 
 import static com.codeborne.selenide.Selenide.open;
@@ -18,11 +17,15 @@ public class MoneyTransferTest {
         var verificationPage = loginPage.validLogin(authInfo);
         var verificationCode = DataHelper.getVerificationCodeFor(authInfo);
         var dashboardPage = verificationPage.validVerify(verificationCode);
-        var cardOnePage = dashboardPage.toCardOne();
+        int firstCardBalanceBefore = dashboardPage.getFirstCardBalance();
+        int secondCardBalanceBefore = dashboardPage.getSecondCardBalance();
+        var cardPage = dashboardPage.toCardOne();
         var transferInfo = DataHelper.getSendMoneyOne();
-        cardOnePage.moneySend(transferInfo);
-        int firstCardBalance = dashboardPage.getFirstCardBalance();
-        assertEquals(10100, firstCardBalance);
+        cardPage.moneySend(transferInfo);
+        int firstCardBalanceAfter = dashboardPage.getFirstCardBalance();
+        int secondCardBalanceAfter = dashboardPage.getSecondCardBalance();
+        assertEquals(firstCardBalanceBefore + 100, firstCardBalanceAfter);
+        assertEquals(secondCardBalanceBefore - 100, secondCardBalanceAfter);
     }
 
     @Test
@@ -32,25 +35,35 @@ public class MoneyTransferTest {
         var verificationPage = loginPage.validLogin(authInfo);
         var verificationCode = DataHelper.getVerificationCodeFor(authInfo);
         var dashboardPage = verificationPage.validVerify(verificationCode);
-        var cardOnePage = dashboardPage.toCardTwo();
+        int firstCardBalanceBefore = dashboardPage.getFirstCardBalance();
+        int secondCardBalanceBefore = dashboardPage.getSecondCardBalance();
+        var cardPage = dashboardPage.toCardTwo();
         var transferInfo = DataHelper.getSendMoneyTwo();
-        cardOnePage.moneySend(transferInfo);
+        cardPage.moneySend(transferInfo);
+        int firstCardBalance = dashboardPage.getFirstCardBalance();
         int secondCardBalance = dashboardPage.getSecondCardBalance();
-        assertEquals(10000, secondCardBalance);
+        int firstCardBalanceAfter = dashboardPage.getFirstCardBalance();
+        int secondCardBalanceAfter = dashboardPage.getSecondCardBalance();
+        assertEquals(firstCardBalanceBefore - 100, firstCardBalanceAfter);
+        assertEquals(secondCardBalanceBefore + 100, secondCardBalanceAfter);
     }
 
     @Test
-    void testTransferZeroOnSecond() {
+    void testTransferZeroOnFirst() {
         var loginPage = open("http://localhost:9999/", LoginPage.class);
         var authInfo = DataHelper.getAuthInfo();
         var verificationPage = loginPage.validLogin(authInfo);
         var verificationCode = DataHelper.getVerificationCodeFor(authInfo);
         var dashboardPage = verificationPage.validVerify(verificationCode);
-        var cardOnePage = dashboardPage.toCardOne();
-        var transferInfo = DataHelper.getSendMoneyThree();
-        cardOnePage.moneySend(transferInfo);
-        int firstCardBalance = dashboardPage.getSecondCardBalance();
-        assertEquals(0, firstCardBalance);
+        int firstCardBalanceBefore = dashboardPage.getFirstCardBalance();
+        int secondCardBalanceBefore = dashboardPage.getSecondCardBalance();
+        var cardPage = dashboardPage.toCardOne();
+        var transferInfo = new DataHelper.SendMoney(String.valueOf(secondCardBalanceBefore),"5559 0000 0000 0002");
+        cardPage.moneySend(transferInfo);
+        int firstCardBalanceAfter = dashboardPage.getFirstCardBalance();
+        int secondCardBalanceAfter = dashboardPage.getSecondCardBalance();
+        assertEquals(firstCardBalanceBefore + secondCardBalanceBefore, firstCardBalanceAfter);
+        assertEquals(secondCardBalanceBefore - secondCardBalanceBefore, secondCardBalanceAfter);
     }
 
     @Test
@@ -60,10 +73,11 @@ public class MoneyTransferTest {
         var verificationPage = loginPage.validLogin(authInfo);
         var verificationCode = DataHelper.getVerificationCodeFor(authInfo);
         var dashboardPage = verificationPage.validVerify(verificationCode);
-        var cardOnePage = dashboardPage.toCardOne();
-        var transferInfo = DataHelper.getSendMoneyThree();
-        cardOnePage.moneySend(transferInfo);
-        int firstCardBalance = dashboardPage.getSecondCardBalance();
-        assertEquals(0, firstCardBalance);
+        int secondCardBalanceBefore = dashboardPage.getSecondCardBalance();
+        var cardPage = dashboardPage.toCardOne();
+        var transferInfo = new DataHelper.SendMoney(String.valueOf(secondCardBalanceBefore + 1000),"5559 0000 0000 0002");
+        cardPage.moneySend(transferInfo);
+        int secondCardBalance = dashboardPage.getSecondCardBalance();
+        assert (secondCardBalance > 0);
     }
 }

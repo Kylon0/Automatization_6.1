@@ -7,7 +7,7 @@ import ru.netology.web.data.DataHelper;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.page;
 
-public class CardOnePage {
+public class CardPage {
     @FindBy(css = "[data-test-id=amount] input")
     private SelenideElement sumToSet;
     @FindBy(css = "[data-test-id=from] input")
@@ -15,7 +15,7 @@ public class CardOnePage {
     @FindBy(css = "[data-test-id=action-transfer]")
     private SelenideElement sendButton;
 
-    public DashboardPage moneySend(DataHelper.sendMoneyOne info) {
+    public DashboardPage moneySend(DataHelper.SendMoney info) {
         sumToSet.setValue(info.getSum());
         cardToGet.setValue(info.getFrom());
         sendButton.click();
